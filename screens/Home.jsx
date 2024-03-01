@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useEffect, useState } from "react"
-import { Button, Image, ScrollView, StyleSheet, Text, View } from "react-native"
+import { ActivityIndicator, Button, Image, ScrollView, StyleSheet, Text, View } from "react-native"
 import { useDispatch, useSelector } from "react-redux"
 import { counterActions } from "../reducers/counter"
 
@@ -21,6 +21,7 @@ const Home = ({ navigation }) =>{
 
     const count = useSelector((state) => state.counter.count)
     const globalStyle = useSelector((state) => state.style.globalStyle)
+    const anime = useSelector((state) => state.anime)
     const dispatch = useDispatch()
 
     const handleLogout = () =>{
@@ -45,7 +46,11 @@ const Home = ({ navigation }) =>{
                     )}
                 <Button title="Logout" onPress={handleLogout}></Button>
             </ScrollView> */}
-
+            {
+                anime.loading? <ActivityIndicator></ActivityIndicator> : anime?.data.map(anime => (
+                    <Image key={anime.mal_id} source={{ uri: anime.images.jpg.image_url }}></Image>
+                ))
+            }
             <Text>Welcome Home mf</Text>
             <Text>{count}</Text>
             <Button title="Increment" onPress={() => dispatch(counterActions.increment())}></Button>

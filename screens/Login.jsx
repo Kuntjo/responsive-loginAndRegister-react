@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
-import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { FIREBASE_AUTH } from "../helpers/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { userSignIn } from "../reducers/auth";
 
 const Login = ({ navigation, nav }) => {
     const auth = FIREBASE_AUTH
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const authState = useSelector((state) => state.auth)
+    const dispatch = useDispatch()
 
     const globalStyle = useSelector((state) => state.style.globalStyle)
 
@@ -20,7 +23,19 @@ const Login = ({ navigation, nav }) => {
         })
     }, [])
 
-    //==Kalo login tanpa asycn storage==
+    // == ini tidak perlu kalau sudah pakai dispatch di line 94==
+    // useEffect(()=>{
+    //     if(authState.token !== null){
+    //         Alert.alert('Login Success', 'Welcome user',[
+    //             {
+    //                 text: 'ok',
+    //                 onPress: () => navigation.navigate('home')
+    //             }
+    //         ])
+    //     }
+    // }, [authState.token])
+
+    //==Kalo login tanpa async storage==
     // const handleLogin = async () =>{
     //     // try {
     //     //     const response = await signInWithEmailAndPassword(auth, email, password)
@@ -49,7 +64,6 @@ const Login = ({ navigation, nav }) => {
     //     } catch (error) {
     //         // console.log(String(error))
     //         if(error.message === 'Firebase: Error (auth/invalid-email).'){
-
     //             Alert.alert('User Not Found','Cant find you bruh')
     //         } else {
     //             Alert.alert('Incorrect Password','Wrong password dummy')
@@ -57,10 +71,28 @@ const Login = ({ navigation, nav }) => {
     //     }
     // }
 
+    //== Login with AsycnStorage==
+    // const handleLogin = () =>{
+    //     signInWithEmailAndPassword(auth, email, password) // sign in user
+    //         .then(response => response.user.getIdToken()) // call user token id
+    //         .then(token => AsyncStorage.setItem('token', token)) //store token
+    //         .then(() => {
+    //             Alert.alert('Login Success', 'Welcome user',[
+    //                 {
+    //                     text: 'ok',
+    //                     onPress: () => navigation.navigate('home')
+    //                 }
+    //             ])
+    //         })
+    // }
+
     const handleLogin = () =>{
-        signInWithEmailAndPassword(auth, email, password) // sign in user
-            .then(response => response.user.getIdToken()) // call user token id
-            .then(token => AsyncStorage.setItem('token', token)) //store token
+        const payload = {
+            email: email,
+            password: password
+        }
+        dispatch(userSignIn(payload))
+            .unwrap() // return promis eof action is asycn thunk action
             .then(() => {
                 Alert.alert('Login Success', 'Welcome user',[
                     {
@@ -73,7 +105,8 @@ const Login = ({ navigation, nav }) => {
 
     return(
         <View style={globalStyle.container}>
-            {/* <Text>Hello login screen</Text> */}
+            {/* <Text>{authState.Login ? 'Loading...' : ''}</Text> */}
+            {authState.loading ? <ActivityIndicator></ActivityIndicator> : ''}
             <Text>{email}</Text>
             <Text>{password}</Text>
             <TextInput style={styles.input} placeholder="Email"
