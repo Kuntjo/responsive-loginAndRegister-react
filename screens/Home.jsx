@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useEffect, useState } from "react"
 import { Button, Image, ScrollView, StyleSheet, Text, View } from "react-native"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { counterActions } from "../reducers/counter"
 
 const Home = ({ navigation }) =>{
     // const [animes, setAnimes] = useState([])
@@ -19,6 +20,8 @@ const Home = ({ navigation }) =>{
     // }, [])
 
     const count = useSelector((state) => state.counter.count)
+    const globalStyle = useSelector((state) => state.style.globalStyle)
+    const dispatch = useDispatch()
 
     const handleLogout = () =>{
         AsyncStorage.removeItem('token')
@@ -26,7 +29,7 @@ const Home = ({ navigation }) =>{
     }
 
     return(
-        <View style={styles.container}>
+        <View style={globalStyle.container}>
             {/* <ScrollView style={styles.scrollContainer}>
                 <Text   Text>Welcome Homes!</Text>
                
@@ -45,6 +48,9 @@ const Home = ({ navigation }) =>{
 
             <Text>Welcome Home mf</Text>
             <Text>{count}</Text>
+            <Button title="Increment" onPress={() => dispatch(counterActions.increment())}></Button>
+            <Button title="Decrement" onPress={() => dispatch(counterActions.decrement())}></Button>
+            <Button title="Go to Details" onPress={() => navigation.navigate('detail')}></Button>
             <Button title="Logout" onPress={handleLogout}></Button>
         </View>
         

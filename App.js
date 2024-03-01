@@ -7,6 +7,7 @@ import Home from './screens/Home';
 import Register from './screens/Register';
 import { Provider } from 'react-redux';
 import store from'./reducers/index';
+import Detail from './screens/Detail';
 
 const Stack = createNativeStackNavigator()
 
@@ -18,6 +19,7 @@ export default function App() {
           <Stack.Screen name='login' component={Login} options={{ headerShown:false }}></Stack.Screen>
           <Stack.Screen name='register' component={Register} options={{ headerShown:false }}></Stack.Screen>
           <Stack.Screen name='home' component={Home} options={{ headerShown:false }}></Stack.Screen>
+          <Stack.Screen name='detail' component={Detail} options={{ headerShown:false }}></Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

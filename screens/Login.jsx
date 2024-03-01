@@ -3,11 +3,14 @@ import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { FIREBASE_AUTH } from "../helpers/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSelector } from "react-redux";
 
 const Login = ({ navigation, nav }) => {
     const auth = FIREBASE_AUTH
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+
+    const globalStyle = useSelector((state) => state.style.globalStyle)
 
     useEffect(()=>{
         AsyncStorage.getItem('token').then(token => {
@@ -69,7 +72,7 @@ const Login = ({ navigation, nav }) => {
     }
 
     return(
-        <View style={styles.container}>
+        <View style={globalStyle.container}>
             {/* <Text>Hello login screen</Text> */}
             <Text>{email}</Text>
             <Text>{password}</Text>
