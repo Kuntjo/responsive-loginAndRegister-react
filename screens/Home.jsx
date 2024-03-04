@@ -1,8 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useEffect, useState } from "react"
-import { ActivityIndicator, Button, Image, ScrollView, StyleSheet, Text, View } from "react-native"
+import { ActivityIndicator, Button, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { useDispatch, useSelector } from "react-redux"
 import { counterActions } from "../reducers/counter"
+import { getTopAnime } from "../reducers/anime"
 
 const Home = ({ navigation }) =>{
     // const [animes, setAnimes] = useState([])
@@ -21,7 +22,7 @@ const Home = ({ navigation }) =>{
 
     const count = useSelector((state) => state.counter.count)
     const globalStyle = useSelector((state) => state.style.globalStyle)
-    const anime = useSelector((state) => state.anime)
+    const animeState = useSelector((state) => state.anime)
     const dispatch = useDispatch()
 
     const handleLogout = () =>{
@@ -29,9 +30,16 @@ const Home = ({ navigation }) =>{
         .then(() => navigation.navigate('login'))
     }
 
+    //memanggil gettopanime harus pakai useEffect
+    useEffect(() => {
+        dispatch(getTopAnime())
+    }, [dispatch])
+
     return(
         <View style={globalStyle.container}>
-            {/* <ScrollView style={styles.scrollContainer}>
+            <Text style={styles.bigText}>Welcome Home Mf</Text>
+            <ScrollView>
+                {/* <ScrollView style={styles.scrollContainer}>
                 <Text   Text>Welcome Homes!</Text>
                
                     {animes?.map(anime => 
@@ -47,16 +55,28 @@ const Home = ({ navigation }) =>{
                 <Button title="Logout" onPress={handleLogout}></Button>
             </ScrollView> */}
             {
-                anime.loading? <ActivityIndicator></ActivityIndicator> : anime?.data.map(anime => (
-                    <Image key={anime.mal_id} source={{ uri: anime.images.jpg.image_url }}></Image>
+                animeState.loading ? <ActivityIndicator/> : animeState?.data?.map(anime => (
+                    <TouchableOpacity onPress={() => navigation.navigate('detail',{ 
+                        id: anime.mal_id,
+                        title: anime.title,
+                        synopsis: anime.synopsis,
+                        image: anime.images.jpg.large_image_url
+                        })}>
+                        <Image 
+                            key={anime.mal_id} // this is the id in mal, shit always need id
+                            source={{ uri: anime.images.jpg.image_url }} // source in mal
+                            style={styles.anime_image}></Image>
+                    </TouchableOpacity>
+                    
                 ))
             }
-            <Text>Welcome Home mf</Text>
             <Text>{count}</Text>
             <Button title="Increment" onPress={() => dispatch(counterActions.increment())}></Button>
             <Button title="Decrement" onPress={() => dispatch(counterActions.decrement())}></Button>
             <Button title="Go to Details" onPress={() => navigation.navigate('detail')}></Button>
             <Button title="Logout" onPress={handleLogout}></Button>
+            </ScrollView>
+            
         </View>
         
     )
@@ -79,8 +99,14 @@ const styles = StyleSheet.create({
     },
 
     anime_image: {
-        height: 80,
-        width: 60
+        height: 220,
+        width: 160,
+        marginBottom: 10
+    },
+
+    bigText: {
+        fontSize: 40,
+        fontWeight: 'bold'
     }
 })
 

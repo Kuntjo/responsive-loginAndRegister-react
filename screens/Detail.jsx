@@ -1,12 +1,27 @@
-import { StyleSheet, Text, View } from "react-native"
-import { useSelector } from "react-redux";
+import { Image, StyleSheet, Text, View } from "react-native"
+import { useSelector, useDispatch } from "react-redux";
+import { getTopAnimeDetails } from "../reducers/anime";
+import { useEffect } from "react";
 
-const Detail = () =>{
+const Detail = ({ route }) =>{
+    const title = route.params.title
+    const id = route.params.id
+    const synopsis = route.params.synopsis
+    const image = route.params.image
     const count = useSelector((state) => state.counter.count)
     const globalStyle = useSelector((state) => state.style.globalStyle)
+
+  
+
     return(
         <View style={globalStyle.container}>
-            <Text>{count}</Text>
+            <View style={styles.header}>
+                <Image source={{ uri: image }} style={styles.anime_image}/>
+                <Text style={styles.title}>{title}</Text>
+            </View>
+            
+            <Text>Synopsis: {synopsis}</Text>
+           
         </View>
     )
 }
@@ -21,4 +36,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 40
     },
+
+    anime_image: {
+        height: 220,
+        width: 160,
+        padding: 20
+    },
+
+    title: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        padding: 12
+    },
+
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        width: '100%'
+    }
 })

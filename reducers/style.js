@@ -10,7 +10,8 @@ const styleSlice = createSlice({
                 backgroundColor: 'pink',
                 justifyContent: 'center',
                 alignItems: 'center',
-                paddingHorizontal: 40
+                paddingHorizontal: 10,
+                paddingVertical: 30
             }
             
         })
